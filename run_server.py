@@ -1,18 +1,19 @@
 import tornado.ioloop
 import tornado.web
 import handlers.WsHandler as Ws
+import classes.Sessions as SESS
 
 
 class MainHandler(tornado.web.RequestHandler):
+    sessions = SESS.Sessions()
+
     def data_received(self, chunk):
+        print('MainHandler', 'data_receiver')
         pass
 
     def get(self):
-        if self.get_secure_cookie("token"):
-            self.write(open('private/index.html', 'r').read())
-        else:
-            self.set_secure_cookie("token", "token_value")
-            self.redirect("/")
+        self.sessions.start(self)
+        self.write(open('private/index.html', 'r').read())
 
 
 class ApiHandler(tornado.web.RequestHandler):
@@ -30,7 +31,7 @@ def make_app():
         (r"/api/(.*)", ApiHandler),
         (r"/", MainHandler),
         (r"/(.*)", tornado.web.StaticFileHandler, {'path': 'private'})
-    ], cookie_secret="my_data")
+    ], cookie_secret="PM_SECRET_KEY")
 
 
 if __name__ == "__main__":
