@@ -1,18 +1,16 @@
 import tornado.ioloop
 import tornado.web
 import handlers.WsHandler as Ws
-import classes.Sessions as SESS
+import classes.Session as SESS
 
 
 class MainHandler(tornado.web.RequestHandler):
-    sessions = SESS.Sessions()
 
     def data_received(self, chunk):
-        print('MainHandler', 'data_receiver')
         pass
 
     def get(self):
-        self.sessions.start(self)
+        SESS.Session.start(self)
         self.write(open('private/index.html', 'r').read())
 
 
@@ -21,7 +19,9 @@ class ApiHandler(tornado.web.RequestHandler):
         pass
 
     def get(self, *args, **kwargs):
-        print(args, kwargs)
+        print('API: Get', args, kwargs)
+        if args[0] == 'get_user_config':
+            pass
         self.write('API: ')
 
 
