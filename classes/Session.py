@@ -1,9 +1,9 @@
 import uuid
 import datetime
-from model.Sessions import Sessions
 import peewee
 import json
-from classes.Req import Req
+from model.Sessions import Sessions
+from classes.Utils import Utils
 
 
 class Session:
@@ -19,7 +19,7 @@ class Session:
 
     @staticmethod
     def start(cli):
-        token = cli.get_secure_cookie('token').decode('UTF-8')
+        token = cli.get_secure_cookie('token').decode('UTF-8') if(cli.get_secure_cookie('token') is not None) else None
         if token:
             try:
                 Sessions.delete().where(Sessions.last_active <= datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -36,7 +36,7 @@ class Session:
                 cli.set_secure_cookie('token', sess.sess_token)
             else:
                 print('Get sess from DB:', db_sess.session_key)
-                sess = Session.get_session(db_sess.session_key, Req.convert_json_to_dict(db_sess.session_data))
+                sess = Session.restore_session(db_sess.session_key, Utils.convert_json_to_dict(db_sess.session_data))
         else:
             print('crt_sess ->>')
             sess = Session.create_session({})
@@ -44,20 +44,21 @@ class Session:
 
         sess.update_session()
         print('Token', sess.sess_token)
-        print('Sess:', sess)
+        print('Sess Data:', sess.sess_data)
+        return sess
 
     @staticmethod
     def create_session(data):
         return Session(uuid.uuid4().hex, data)
 
     @staticmethod
-    def get_session(token, data):
+    def restore_session(token, data):
         return Session(token, data)
 
     def update_session(self):
         curr_date = (datetime.datetime.now() + datetime.timedelta(minutes=Session.SESSION_LIFETIME))\
             .strftime("%Y-%m-%d %H:%M:%S")
-        print('Update Time', curr_date)
+        print('Update Session Time:', curr_date)
         Sessions.insert(
             session_key=self.sess_token,
             session_data=json.dumps(self.sess_data),

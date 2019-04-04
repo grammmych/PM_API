@@ -4,8 +4,8 @@ class AbstractProc:
         self.req = req
 
     @property
-    def event(self):
-        return self.req.event
+    def events(self):
+        return self.req.events
 
     @property
     def data(self):

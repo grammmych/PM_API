@@ -1,6 +1,6 @@
 import tornado.websocket
-import classes.Req as r
-import classes.ProcMain as p
+from classes.Req import Req
+from classes.ProcMain import ProcMain
 
 
 class Client:
@@ -32,8 +32,8 @@ class WsHandler(tornado.websocket.WebSocketHandler):
     def on_message(self, message):
         print("WS Msg:", message)
         try:
-            req = r.Req.init_from_json(message)
-            proc = p.ProcMain(req)
+            req = Req.init_from_json(message)
+            proc = ProcMain(req)
             self.write_message(proc.processing())
         except Exception as err:
             print(err.__str__())
