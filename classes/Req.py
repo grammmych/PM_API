@@ -26,12 +26,20 @@ class Req:
         event = Req.prepare_request_path(req_handler.path_args[0])
         data = Req.prepare_request_args(req_handler.request.arguments)
         if event.__len__() < 1:
-            raise Exception('Incorrect Request format')
+            raise Exception('Incorrect Get Request format')
+        return Req(event, data, sess)
+
+    @staticmethod
+    def init_from_post_request(req_handler):
+        sess = Session.start(req_handler)
+        event = Req.prepare_request_path(req_handler.path_args[0])
+        data = Req.prepare_request_body(req_handler.request.body)
+        if event.__len__() < 1:
+            raise Exception('Incorrect Post Request format')
         return Req(event, data, sess)
 
     @staticmethod
     def make_response(data=None):
-        print("Response:", data)
         return json.dumps({
             "error": False,
             "data": data
@@ -39,7 +47,7 @@ class Req:
 
     @staticmethod
     def make_error_response(msg):
-        print("Error Response:", msg)
+        print("GlobalError:", msg)
         return json.dumps({
             "error": True,
             "msg": msg
@@ -55,4 +63,8 @@ class Req:
     @staticmethod
     def prepare_request_path(req_path):
         return req_path.split("/")
+
+    @staticmethod
+    def prepare_request_body(req_body):
+        return Utils.convert_json_to_dict(req_body.decode("UTF-8"))
 

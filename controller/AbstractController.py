@@ -9,4 +9,4 @@ class AbstractController:
             fn = getattr(self, self.request.events[1])
             return fn()
         else:
-            raise Exception('Method `%s` not find in `%s`' % (self.request.events[1], self.__class__.__name__))
+            raise Exception('Method `%s` not found in `%s`' % (self.request.events[1], self.__class__.__name__))

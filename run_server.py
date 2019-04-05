@@ -22,13 +22,23 @@ class ApiHandler(tornado.web.RequestHandler):
         pass
 
     def get(self, *args, **kwargs):
-        print("ApiHandler ---->>>>")
+        print("ApiGETHandler ---->>>>")
         try:
             req = Req.init_from_get_request(self)
             proc = ProcMain(req)
             self.write(proc.processing())
         except Exception as e:
-            Req.make_error_response(e.__str__())
+            self.write(Req.make_error_response(e.__str__()))
+
+    def post(self, *args, **kwargs):
+        print("ApiPOSTHandler ---->>>>")
+        try:
+            req = Req.init_from_post_request(self)
+            print("PreparedReq:", req.events, req.data)
+            proc = ProcMain(req)
+            self.write(proc.processing())
+        except Exception as e:
+            self.write(Req.make_error_response(e.__str__()))
 
 
 def make_app():
