@@ -77,6 +77,7 @@ class Session:
     def del_sess_var(self, var_name):
         if self.is_set_sess_var(var_name):
             del self.sess_data[var_name]
+            self.update_session()
 
     def is_set_sess_var(self, var_name):
         return var_name in self.sess_data

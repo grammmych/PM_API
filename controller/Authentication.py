@@ -34,3 +34,8 @@ class Authentication(AbstractController):
             "login": users_query.login
         })
         return "Login Success!"
+
+    def logout(self):
+        print("Exec logout")
+        self.request.session.del_sess_var("user_data")
+        return "Logout success!"
