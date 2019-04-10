@@ -2,7 +2,7 @@ import uuid
 import datetime
 import peewee
 import json
-from model.Sessions import Sessions
+from model.SessionsModel import Sessions
 from classes.Utils import Utils
 
 

@@ -45,8 +45,8 @@ def make_app():
     return tornado.web.Application([
         (r"/ws", Ws.WsHandler),
         (r"/api/(.*)", ApiHandler),
-        (r"/", MainHandler),
-        (r"/(.*)", tornado.web.StaticFileHandler, {'path': 'private'})
+        (r"/(.*\..*)", tornado.web.StaticFileHandler, {'path': 'private'}),
+        (r"/.*", MainHandler)
     ], cookie_secret="PM_SECRET_KEY")
 
 
