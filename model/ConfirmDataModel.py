@@ -7,16 +7,22 @@ from peewee import *
 class Confirm_Data(BaseModel):
     token = TextField(primary_key=True)
     data = TextField()
-    expire_date = DateField()
+    expire_date = DateTimeField()
 
     @staticmethod
     def clear_expired_rows():
-        Confirm_Data.delete().where(Confirm_Data.expire_date < datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        Confirm_Data.delete().where(
+            (Confirm_Data.expire_date < datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        ).execute()
 
     def get_data_by_token(self, token):
         try:
-            return self.get(self.token == token)
+            print(token, type(token), len(token))
+            result = self.get(self.id == token)
+            print("get_by_token:", token, len(result))
+            return result
         except DoesNotExist:
+            print("DoseNotExist")
             return None
 
     def set_data(self, data, timeout=30):
